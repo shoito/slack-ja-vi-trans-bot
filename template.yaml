@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    Slack ja-vi trans bot
+
+Globals:
+    Function:
+        Timeout: 30
+
+Parameters:
+    GasEndpoint:
+        Type: String
+    JaUsers:
+        Type: String
+    SlackVerificationToken:
+        Type: String
+    SlackToken:
+        Type: String
+
+Resources:
+    WebhookFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: trans/
+            Handler: webhook.handler
+            Runtime: nodejs8.10
+            FunctionName: slack-ja-vi-trans-webhook
+            Environment:
+                Variables:
+                    GAS_ENDPOINT: !Ref GasEndpoint
+                    JA_USERS: !Ref JaUsers
+                    SLACK_VERIFICATION_TOKEN: !Ref SlackVerificationToken
+                    SLACK_TOKEN: !Ref SlackToken
+            Events:
+                Webhook:
+                    Type: Api
+                    Properties:
+                        Path: /webhook
+                        Method: POST
